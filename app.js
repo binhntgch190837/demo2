@@ -23,58 +23,50 @@ app.post('/update', async (req, res) => {
     const url = req.body.txtURL
     let updateValues = { $set: { name: name, price: price, cat: category, picURL: url } };
 
-    //Kiểm tra tên sản phẩm
-    if(name ==""){
-        let product = {};
-        product.id = id;
-        product.price = price;
-        product.picURL = url;
-        res.render('edit', {product, nameErr: 'Please Enter Product Name!' })
-        return;
-    }
-    //Kiểm tra number có nằm trong khoảng giá trị
-    let error = await checkRangeOfNumber(0,100000,price);
-    if(error != ""){
-        let product = {};
-        product.id = id;
-        product.name = name;
-        product.picURL = url;
-        res.render('edit',{product, priceErr: error });
-        return;
-    }
+    // //Kiểm tra tên sản phẩm
+    // if(name ==""){
+    //     let product = {};
+    //     product._id = id;
+    //     product.price = price;
+    //     product.picURL = url;
+    //     res.render('edit', {product, nameErr: 'Please Enter Product Name!' })
+    //     return;
+    // }
+    // //Kiểm tra number có nằm trong khoảng giá trị
+    // let error = await checkRangeOfNumber(0,100000,price);
+    // if(error != ""){
+    //     let product = {};
+    //     product._id = id;
+    //     product.name = name;
+    //     product.picURL = url;
+    //     res.render('edit',{product, priceErr: error });
+    //     return;
+    // }
 
-    //Kiểm tra URL có để trống.
-    if(url == ""){
-        let product = {};
-        product.id = id;
-        product.name = name;
-        product.price = price;
-        res.render('edit', {product, picError: 'Please Enter URL!' })
-        return;
-    }
+    // //Kiểm tra URL có để trống.
+    // if(url == ""){
+    //     let product = {};
+    //     product._id = id;
+    //     product.name = name;
+    //     product.price = price;
+    //     res.render('edit', {product, picError: 'Please Enter URL!' })
+    //    return;
+    //}
     //Kiểm tra xem url có kết thúc bằng đuôi .png
-    if (url.endsWith('.png')==false) {
+    // console.log("Check png")
+    // console.log(url.endsWith('png'))
+
+    if (url.endsWith('.png') == false) {
         let product = {};
-        product.id = id;
+        product._id = id;
         product.name = name;
         product.price = price;
-        res.render('edit', {product, picError: 'The image was not png file!' })
+        res.render('edit', { product, picError: 'The image was not png file!' })
         return;
-    } else {
-        await updateDocument(id, updateValues, "Products")
-        res.redirect('/')
     }
-        // if (url.length == 0) {
-        //     var result = await getAll("Products")
-        //     res.render('edit', { products: result, picError: 'Phai nhap Picture!' })
-        // } else {
-        //     //xay dung doi tuong insert
-        //     const obj = { name: name, price: price, picURL: url, cat: category }
-        //     //goi ham de insert vao DB
-        //     await updateDocument(id, updateValues, "Products")
-        //     res.redirect('/')
-        // };
-    })
+    await updateDocument(id, updateValues, "Products")
+    res.redirect('/')
+})
 
 app.get('/edit/:id', async (req, res) => {
     const idValue = req.params.id
@@ -151,6 +143,9 @@ app.post('/searchByProductName', async (req, res) => {
         res.render('home', { products: result })
     }
 })
+
+var currentDate = new Date();
+var time = currentDate.getDate() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear() + ' ' + currentDate.getHours() + ':' + currentDate.getSeconds();
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT)
